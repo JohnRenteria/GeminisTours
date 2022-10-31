@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:proyectopersonal/Pages/Login_Page.dart';
+import 'package:proyectopersonal/Pages/MiLista.dart';
 import 'package:proyectopersonal/Pages/Register_Page.dart';
+import 'Pages/Mi_Sitios_Tutristicos.dart';
 import 'Pages/Splach_Page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';

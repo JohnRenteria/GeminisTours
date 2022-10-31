@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:proyectopersonal/Modelos/Sitios.dart';
 import 'package:proyectopersonal/Modelos/Users.dart' as UserApp;
 
 class FirebaseApi{
@@ -40,4 +41,26 @@ class FirebaseApi{
       return e.code;
     }
   }
+
+  Future<String> createSitio(Sitio sitio) async{
+    try{
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      final document = FirebaseFirestore.instance.collection("users").
+      doc(uid).
+      collection("sitios").
+      doc();
+      sitio.id = document.id;
+
+      final result = FirebaseFirestore.instance.collection("users").
+      doc(uid).
+      collection("sitios").
+      doc(sitio.id).
+      set(sitio.toJson());
+      return sitio.id;
+    } on FirebaseException catch (e){
+      print("FirebaseException ${e.code}");
+      return e.code;
+    }
+  }
+
 }

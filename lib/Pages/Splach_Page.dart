@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:proyectopersonal/Pages/Mi_Sitios_Tutristicos.dart';
 import 'Login_Page.dart';
 
 class SplashPage extends StatefulWidget {
@@ -16,6 +18,21 @@ class _SplashPageState extends State<SplashPage> {
     super.initState();
   }
 
+  Future<void> _closeSplash() async {
+    Future.delayed(const Duration(seconds: 5), () async {
+      var currentUser = FirebaseAuth.instance.currentUser;
+      if(currentUser == null){
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginPage()));
+      } else{
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MiSitiosTuristico()));
+      }
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const LoginPage()));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,13 +46,6 @@ class _SplashPageState extends State<SplashPage> {
       ),
     );
   }
-  Future<void> _closeSplash() async {
-    Future.delayed(const Duration(seconds: 5), () async {
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => const LoginPage()));
-    });
-  }
+
 }
 
