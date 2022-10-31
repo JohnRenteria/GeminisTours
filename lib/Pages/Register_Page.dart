@@ -4,6 +4,7 @@ import 'package:proyectopersonal/Pages/Login_Page.dart';
 import '../Modelos/Users.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import '../Repository/firebase_api.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -14,6 +15,9 @@ class RegisterPage extends StatefulWidget {
 enum Genre{masculino,femenino}
 
 class _RegisterPageState extends State<RegisterPage> {
+
+  final FirebaseApi _firebaseApi = FirebaseApi();
+
   final _name=TextEditingController();
   final _email=TextEditingController();
   final _password=TextEditingController();
@@ -34,9 +38,35 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  void saveUser(User user) async{
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString("user", jsonEncode(user));
+  void _saveUser(User user) async{
+    var result = await _firebaseApi.createUser(user);
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => const LoginPage()));
+  }
+
+  void _registerUser(User user) async{
+    //SharedPreferences prefs = await SharedPreferences.getInstance();
+    //prefs.setString("user", jsonEncode(user));
+    var result = await _firebaseApi.registerUser(user.email, user.password);
+    String msg = "";
+    if (result == 'invalid-email'){
+      msg = "El correo electrónico está mal escrito";
+    } else if (result == "email-already-in-use"){
+      msg = "Ya existe una cuenta con este correo electrónico";
+    }else if (result == "waek-password") {
+      msg = "Debe utilizar una contraseña de minimo 6 digitos";
+    } else if (result == "network-request-failed"){
+      msg = "Revise su conexión a intenet";
+    } else {
+      msg = "Usuario registrado con exito";
+      user.uid = result;
+      _saveUser(user);
+    }
+    _showMsg(msg);
+    if (msg == "Usuario registrado con exito"){
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => const LoginPage()));
+    }
   }
 
   void _onRegisterButtonClickend(){
@@ -46,10 +76,9 @@ class _RegisterPageState extends State<RegisterPage> {
         if (_genre == Genre.femenino) {
           genre = "Femenino";
         }
-        var user = User(_name.text,_email.text,_password.text, genre);
-        saveUser(user);
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => LoginPage()));
+
+        var user = User("",_name.text,_email.text,_password.text, genre);
+        _registerUser(user);
       } else{
         _showMsg("Las contraseñas deben ser iguales");
       }

@@ -55,9 +55,7 @@ class HomePage extends StatelessWidget {
                   fontSize: 19,
                 ),
               ),
-
             ),
-
           ],
         ),
       ),
