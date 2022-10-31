@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-//import 'package:shared_preferences/shared_preferences.dart';
+import 'package:proyectopersonal/Pages/Login_Page.dart';
+import '../Modelos/Users.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -20,7 +23,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Genre?_genre=Genre.masculino;
 
-  void _showMsg(BuildContext context, String msg){
+  void _showMsg(String msg){
     final scaffold = ScaffoldMessenger.of(context);
     scaffold.showSnackBar(
         SnackBar(
@@ -31,23 +34,26 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
+  void saveUser(User user) async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("user", jsonEncode(user));
+  }
+
   void _onRegisterButtonClickend(){
     setState(() {
-      if(_password.text == _repPassword){
-      String genre="Masculino";
-      if (_genre==Genre.femenino){
-        genre="Femenino";
-      }
-      data=
-      "Nombre: ${_name.text} "
-          "\nEmail: ${_email.text} "
-          "\nGénero: $genre";
-    }
-      else{
-        _showMsg(context, "Las contraseñas deben de ser iguales");
+      if(_password.text == _repPassword.text) {
+        String genre = "Masculino";
+        if (_genre == Genre.femenino) {
+          genre = "Femenino";
+        }
+        var user = User(_name.text,_email.text,_password.text, genre);
+        saveUser(user);
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => LoginPage()));
+      } else{
+        _showMsg("Las contraseñas deben ser iguales");
       }
     });
-
   }
   @override
   Widget build(BuildContext context) {
@@ -148,13 +154,8 @@ class _RegisterPageState extends State<RegisterPage> {
                   onPressed: (){
                     _onRegisterButtonClickend();
                   },
-                  child: const Text("Registrar")),
-              Text(
-                data,
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontStyle: FontStyle.italic)
-              ),
+                  child: const Text("Registrar")
+                ),
               ],
             ),
           ),

@@ -6,6 +6,21 @@ class User{
 
   User(this._name, this._email, this._password, this._genre);
 
+  User.Empty();
+
+  User.fromJson(Map<String, dynamic> json)
+  : _name= json["name"],
+    _email= json ["email"],
+    _password = json ["password"],
+    _genre= json ["genre"];
+
+  Map<String, dynamic> toJson() => {
+    "name": _name,
+    "email": _email,
+    "password": _password,
+    "genre": _genre,
+  };
+
   get name => _name;
 
   set name(value) {
